@@ -27,12 +27,14 @@ public final class WebsiteScraper
 
     public static void main(String[] args)
     {
-        new WebsiteScraper().start();
+        new WebsiteScraper();
     }
 
     public static synchronized void addData(String data)
     {
+        //System.out.println(data);
         newsData.add(data);
+        //System.out.println(newsData.size());
     }
 
     private void initClients()
@@ -46,7 +48,7 @@ public final class WebsiteScraper
 
     private void start()
     {
-        scheduledExecutorService = new ScheduledThreadPoolExecutor(1);
+        scheduledExecutorService = new ScheduledThreadPoolExecutor(4);
         refresh();
         scheduledExecutorService.shutdown();
     }
@@ -56,6 +58,7 @@ public final class WebsiteScraper
         for (BaseClient client : clientList)
         {
             scheduledExecutorService.submit(new ClientWorker(client));
+            //scheduledExecutorService.scheduleAtFixedRate(new ClientWorker(client), 1, 1, TimeUnit.SECONDS);
         }
 
         System.out.println("content");

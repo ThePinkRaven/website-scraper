@@ -1,7 +1,5 @@
 package com.tpr.ravennews.client;
 
-import java.util.List;
-
 public abstract class BaseClient implements Scrapeable
 {
     StringBuilder stringBuilder;
@@ -24,7 +22,7 @@ public abstract class BaseClient implements Scrapeable
         newsData = new ClientData(newsUrl);
     }
 
-    public List<String> getProfileParsedData()
+    /*public List<String> getProfileParsedData()
     {
         return profileData.getData();
     }
@@ -37,5 +35,5 @@ public abstract class BaseClient implements Scrapeable
     public List<String> getNewsParsedData()
     {
         return newsData.getData();
-    }
+    }*/
 }

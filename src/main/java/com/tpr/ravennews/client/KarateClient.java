@@ -1,5 +1,6 @@
 package com.tpr.ravennews.client;
 
+import com.tpr.ravennews.WebsiteScraper;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -15,7 +16,10 @@ public class KarateClient extends BaseClient
     @Override
     public void scrapeProfileData()
     {
-        Elements div = profileData.getDocument().select("div").attr("class", "item-page");
+        clearStringBuilderData();
+
+        Elements div = profileData.getDocument().select("div")
+                .attr("class", "item-page");
 
         stringBuilder.append(div.select("h2").text());
 
@@ -24,14 +28,15 @@ public class KarateClient extends BaseClient
             stringBuilder.append(paragraph.text());
         }
 
-        profileData.addData(stringBuilder.toString());
-        stringBuilder.delete(0, stringBuilder.length());
+        WebsiteScraper.profileData.add("asdadasdas");
+
+        // profileData.addData(stringBuilder.toString());
     }
 
     @Override
     public void scrapeActivitiesData()
     {
-
+        clearStringBuilderData();
     }
 
     @Override
@@ -44,6 +49,8 @@ public class KarateClient extends BaseClient
 
         for (Element div : divs)
         {
+            clearStringBuilderData();
+
             stringBuilder.append(div.select("h2").text());
 
             for (Element paragraph : div.select("p"))
@@ -62,8 +69,14 @@ public class KarateClient extends BaseClient
                 }
             }
 
-            newsData.addData(stringBuilder.toString());
-            stringBuilder.delete(0, stringBuilder.length());
+            WebsiteScraper.addData("dupa");
+
+            // newsData.addData(stringBuilder.toString());
         }
+    }
+
+    private void clearStringBuilderData()
+    {
+        stringBuilder.delete(0, stringBuilder.length());
     }
 }

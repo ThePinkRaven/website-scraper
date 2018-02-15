@@ -1,6 +1,7 @@
 package com.tpr.ravennews.client;
 
-import com.tpr.ravennews.WebsiteScraper;
+import com.tpr.ravennews.model.News;
+import com.tpr.ravennews.utils.Utils;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -8,70 +9,55 @@ import java.util.stream.Collectors;
 
 public class KarateClient extends BaseClient
 {
-    public KarateClient(String profileUrl, String activitiesUrl, String newsUrl)
+    public KarateClient(String newsUrl)
     {
-        super(profileUrl, activitiesUrl, newsUrl);
-    }
-
-    @Override
-    public void scrapeProfileData()
-    {
-        clearStringBuilderData();
-
-        Elements div = profileData.getDocument().select("div")
-                .attr("class", "item-page");
-
-        stringBuilder.append(div.select("h2").text());
-
-        for (Element paragraph : div.select("p"))
-        {
-            stringBuilder.append(paragraph.text());
-        }
-
-        WebsiteScraper.profileData.add("asdadasdas");
-
-        // profileData.addData(stringBuilder.toString());
-    }
-
-    @Override
-    public void scrapeActivitiesData()
-    {
-        clearStringBuilderData();
+        super(newsUrl);
     }
 
     @Override
     public void scrapeNewsData()
     {
-        Elements divs = newsData.getDocument().getElementsByTag("div").
-                stream()
+        Elements divs = getHtmlDocument().getElementsByTag("div")
+                .stream()
                 .filter(div -> div.className().contains("leading-"))
                 .collect(Collectors.toCollection(Elements::new));
 
         for (Element div : divs)
         {
             clearStringBuilderData();
+            News news = new News();
+            String title = Utils.formatDots(div.select("h2").text());
 
-            stringBuilder.append(div.select("h2").text());
+            if (!title.isEmpty())
+            {
+                news.setTitle(title);
+            }
 
             for (Element paragraph : div.select("p"))
             {
+                String paragraphText = Utils.formatDots(paragraph.text());
+
                 if (!paragraph.getElementsByTag("a").isEmpty())
                 {
                     for (Element link : paragraph.getElementsByTag("a"))
                     {
-                        stringBuilder.append(paragraph.text())
-                                .append(" link - > ")
-                                .append(link.attr("abs:href"));
+                        String linkString = paragraphText + "," + link.attr("abs:href");
+
+                        news.addLink(linkString);
                     }
                 } else
                 {
-                    stringBuilder.append(paragraph.text());
+                    if (!paragraphText.isEmpty())
+                    {
+                        stringBuilder
+                                .append(paragraphText)
+                                .append("\n");
+                    }
                 }
             }
 
-            WebsiteScraper.addData("dupa");
-
-            // newsData.addData(stringBuilder.toString());
+            news.setContent(stringBuilder.toString());
+            addNewsToTempList(news);
         }
     }
 

@@ -1,6 +1,6 @@
-package com.tpr.ravennews.utils;
+package com.tpr.ravennews.web;
 
-import com.tpr.ravennews.Globals;
+import com.tpr.ravennews.utils.Configuration;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -13,7 +13,7 @@ public class Scraper
         try
         {
             return Jsoup.connect(url)
-                    .timeout(Globals.CONNECTION_TIME_OUT)
+                    .timeout(Configuration.CONNECTION_TIME_OUT)
                     .get();
         } catch (IOException e)
         {

@@ -3,72 +3,65 @@ package com.tpr.ravennews;
 import com.tpr.ravennews.client.BaseClient;
 import com.tpr.ravennews.client.ClientWorker;
 import com.tpr.ravennews.client.KarateClient;
+import com.tpr.ravennews.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
+import static com.tpr.ravennews.utils.Configuration.*;
 
 public final class WebsiteScraper
 {
-    // test
-    public static List<String> profileData = new ArrayList<>();
-    private List<BaseClient> clientList;
-    public static List<String> newsData = new ArrayList<>();
     private ScheduledExecutorService scheduledExecutorService;
+    private List<BaseClient> clientList;
 
     private WebsiteScraper()
     {
-        this.clientList = new ArrayList<>();
-
         initClients();
+
         start();
     }
 
     public static void main(String[] args)
     {
-        new WebsiteScraper().start();
-    }
-
-    public static synchronized void addData(String data)
-    {
-        newsData.add(data);
+        new WebsiteScraper();
     }
 
     private void initClients()
     {
-        // Dodanie klienta Karate
+        this.clientList = new ArrayList<>();
 
-        clientList.add(new KarateClient("http://karate.zgora.pl/index.php?option=com_content&view=article&id=6&Itemid=6",
-                "http://karate.zgora.pl/index.php?option=com_content&view=category&id=14&Itemid=4",
-                "http://karate.zgora.pl/"));
+        // Add new clients here
+        clientList.add(new KarateClient("http://karate.zgora.pl/"));
     }
 
     private void start()
     {
-        scheduledExecutorService = new ScheduledThreadPoolExecutor(1);
+        Utils.printlnWithColor(SYSTEM_MSG_COLOR, APP_START);
+        scheduledExecutorService = new ScheduledThreadPoolExecutor(POOL_SIZE);
+
         refresh();
-        scheduledExecutorService.shutdown();
     }
 
     private void refresh()
     {
+        Utils.printlnWithColor(SYSTEM_MSG_COLOR, APP_REFRESH);
+
         for (BaseClient client : clientList)
         {
-            scheduledExecutorService.submit(new ClientWorker(client));
+            scheduledExecutorService.scheduleWithFixedDelay(new ClientWorker(client),
+                    INIT_DELAY,
+                    REFRESH_DELAY,
+                    TimeUnit.SECONDS);
         }
+    }
 
-        System.out.println("content");
-
-        for (String s : profileData)
-        {
-            System.out.println(s);
-        }
-        for (String s : newsData)
-        {
-            System.out.println(s);
-        }
-
-        System.out.println("end content");
+    private void stop()
+    {
+        Utils.printlnWithColor(SYSTEM_MSG_COLOR, APP_STOP);
+        scheduledExecutorService.shutdown();
     }
 }

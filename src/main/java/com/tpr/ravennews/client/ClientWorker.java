@@ -1,5 +1,10 @@
 package com.tpr.ravennews.client;
 
+import com.tpr.ravennews.utils.Utils;
+
+import static com.tpr.ravennews.utils.Configuration.APP_CHECK_CLIENT;
+import static com.tpr.ravennews.utils.Configuration.APP_MSG_COLOR;
+
 public class ClientWorker implements Runnable
 {
     private BaseClient client;
@@ -12,8 +17,10 @@ public class ClientWorker implements Runnable
     @Override
     public void run()
     {
-        client.scrapeProfileData();
-        client.scrapeActivitiesData();
+        Utils.printlnWithColor(APP_MSG_COLOR, APP_CHECK_CLIENT + client.getClass().getSimpleName() + " -> " + Utils.getCurrentTime());
+
         client.scrapeNewsData();
+        client.printTempNewsList();
+        client.processNews();
     }
 }

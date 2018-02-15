@@ -3,7 +3,6 @@ package com.tpr.ravennews.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 
 public class News
 {
@@ -52,19 +51,5 @@ public class News
         {
             this.links.add(link);
         }
-    }
-
-    @Override
-    public boolean equals(Object o)
-    {
-        if (this == o) return true;
-
-        if (o == null || getClass() != o.getClass()) return false;
-
-        News news = (News) o;
-
-        return Objects.equals(title, news.title) &&
-                Objects.equals(content, news.content) &&
-                Objects.equals(links, news.links);
     }
 }

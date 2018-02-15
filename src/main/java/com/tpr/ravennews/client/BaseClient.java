@@ -5,6 +5,7 @@ import com.tpr.ravennews.utils.ConsoleColors;
 import com.tpr.ravennews.utils.Utils;
 import com.tpr.ravennews.web.Scrapeable;
 import com.tpr.ravennews.web.Scraper;
+import org.apache.commons.collections.CollectionUtils;
 import org.jsoup.nodes.Document;
 
 import java.math.BigDecimal;
@@ -15,14 +16,14 @@ import static com.tpr.ravennews.utils.Configuration.*;
 
 public abstract class BaseClient implements Scrapeable
 {
-    protected StringBuilder stringBuilder;
+    StringBuilder stringBuilder;
     private String newsUrl;
     private Document htmlDocument;
     private BigDecimal version;
     private List<News> currentNewsList;
     private List<News> tempNewsList;
 
-    protected BaseClient(String newsUrl)
+    BaseClient(String newsUrl)
     {
         this.stringBuilder = new StringBuilder();
         this.newsUrl = newsUrl;
@@ -38,12 +39,12 @@ public abstract class BaseClient implements Scrapeable
         return Scraper.getJsoupDocumentFromUrl(this.newsUrl);
     }
 
-    protected Document getHtmlDocument()
+    Document getHtmlDocument()
     {
         return htmlDocument;
     }
 
-    protected void addNewsToTempList(News news)
+    void addNewsToTempList(News news)
     {
         if (news != null)
         {
@@ -55,21 +56,17 @@ public abstract class BaseClient implements Scrapeable
     {
         if (version.equals(BigDecimal.ZERO) && !tempNewsList.isEmpty())
         {
-            currentNewsList = tempNewsList;
-            version = BigDecimal.ONE;
-
-            Utils.printlnWithColor(APP_MSG_COLOR, APP_NEWS_INIT + version.toEngineeringString());
+            updateCurrentListAndVersion(BigDecimal.ONE, APP_NEWS_INIT);
         }
     }
 
     private void updateNewsList()
     {
-        if (!currentNewsList.equals(tempNewsList))
-        {
-            currentNewsList = tempNewsList;
-            version = version.add(BigDecimal.valueOf(0.01));
+        // todo sprawdzić dlaczego za każdym razem lista pobrana jest inna niż ta current : ( powinna być taka sama skoro nie zmienili newsów
 
-            Utils.printlnWithColor(APP_MSG_COLOR, APP_NEWS_UPDATE + version.toEngineeringString());
+        if (!CollectionUtils.isEqualCollection(currentNewsList, tempNewsList))
+        {
+            updateCurrentListAndVersion(BigDecimal.valueOf(0.01), APP_NEWS_UPDATE);
         }
     }
 
@@ -91,5 +88,19 @@ public abstract class BaseClient implements Scrapeable
             System.out.println(ConsoleColors.BLUE + news.getTitle());
             System.out.println(ConsoleColors.PURPLE + news.getContent());
         }
+    }
+
+    private void updateCurrentListAndVersion(BigDecimal addValue, String message)
+    {
+        currentNewsList.clear();
+        currentNewsList.addAll(tempNewsList);
+        version = version.add(addValue);
+
+        Utils.printlnWithColor(APP_MSG_COLOR, message + version.toEngineeringString());
+    }
+
+    void clearTempNewsList()
+    {
+        tempNewsList.clear();
     }
 }

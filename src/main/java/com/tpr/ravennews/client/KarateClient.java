@@ -17,6 +17,8 @@ public class KarateClient extends BaseClient
     @Override
     public void scrapeNewsData()
     {
+        clearTempNewsList();
+
         Elements divs = getHtmlDocument().getElementsByTag("div")
                 .stream()
                 .filter(div -> div.className().contains("leading-"))

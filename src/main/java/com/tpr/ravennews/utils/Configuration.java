@@ -7,7 +7,7 @@ public class Configuration
     public static final int POOL_SIZE = 1;
 
     public static final long INIT_DELAY = 1;
-    public static final long REFRESH_DELAY = 10;
+    public static final long REFRESH_DELAY = 1;
 
     public static final String SYSTEM_MSG_COLOR = ConsoleColors.RED_BOLD_BRIGHT;
     public static final String APP_MSG_COLOR = ConsoleColors.RED_BACKGROUND;

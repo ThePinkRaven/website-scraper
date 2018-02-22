@@ -1,8 +1,11 @@
 package com.tpr.ravennews.utils;
 
+import com.tpr.ravennews.model.News;
+
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public final class Utils
 {
@@ -29,5 +32,23 @@ public final class Utils
     {
         System.out.println(color + text);
         System.out.println(ConsoleColors.RESET);
+    }
+
+    public static boolean areNewsCollectionsEqual(List<News> news1, List<News> news2)
+    {
+        if (news1.size() == news2.size())
+        {
+            for (int i = 0; i < news1.size(); i++)
+            {
+                if (!news1.get(i).equals(news2.get(i)))
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
     }
 }

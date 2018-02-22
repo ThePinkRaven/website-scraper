@@ -12,7 +12,7 @@ public class News
 
     public News()
     {
-        this.links = new ArrayList<>();
+        links = new ArrayList<>();
     }
 
     public String getTitle()
@@ -51,5 +51,21 @@ public class News
         {
             this.links.add(link);
         }
+    }
+
+    @Override
+    public boolean equals(Object o)
+    {
+        if (this == o) return true;
+
+        if (o == null || getClass() != o.getClass()) return false;
+
+        News news = (News) o;
+
+        if (title != null ? !title.equals(news.title) : news.title != null) return false;
+
+        if (content != null ? !content.equals(news.content) : news.content != null) return false;
+
+        return links != null ? links.equals(news.links) : news.links == null;
     }
 }

@@ -20,7 +20,6 @@ public class ClientWorker implements Runnable
         Utils.printlnWithColor(APP_MSG_COLOR, APP_CHECK_CLIENT + client.getClass().getSimpleName() + " -> " + Utils.getCurrentTime());
 
         client.scrapeNewsData();
-        client.printTempNewsList();
-        client.processNews();
+        client.updateCurrentNewsList();
     }
 }

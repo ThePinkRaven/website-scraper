@@ -5,7 +5,6 @@ import com.tpr.ravennews.utils.ConsoleColors;
 import com.tpr.ravennews.utils.Utils;
 import com.tpr.ravennews.web.Scrapeable;
 import com.tpr.ravennews.web.Scraper;
-import org.apache.commons.collections.CollectionUtils;
 import org.jsoup.nodes.Document;
 
 import java.math.BigDecimal;
@@ -52,31 +51,20 @@ public abstract class BaseClient implements Scrapeable
         }
     }
 
-    private void initNewsList()
+    public void updateCurrentNewsList()
     {
-        if (version.equals(BigDecimal.ZERO) && !tempNewsList.isEmpty())
-        {
-            updateCurrentListAndVersion(BigDecimal.ONE, APP_NEWS_INIT);
-        }
-    }
+        printTempNewsList();
 
-    private void updateNewsList()
-    {
         // todo sprawdzić dlaczego za każdym razem lista pobrana jest inna niż ta current : ( powinna być taka sama skoro nie zmienili newsów
+        // edit: napisalem swoja metode sprawdzania kolekcji i niby dziala - do testow
 
-        if (!CollectionUtils.isEqualCollection(currentNewsList, tempNewsList))
+        if (!Utils.areNewsCollectionsEqual(currentNewsList, tempNewsList) && !tempNewsList.isEmpty())
         {
-            updateCurrentListAndVersion(BigDecimal.valueOf(0.01), APP_NEWS_UPDATE);
+            updateCurrentListContentsAndVersion(APP_NEWS_UPDATE);
         }
     }
 
-    public void processNews()
-    {
-        initNewsList();
-        updateNewsList();
-    }
-
-    public void printTempNewsList()
+    private void printTempNewsList()
     {
         if (tempNewsList.isEmpty())
         {
@@ -90,13 +78,18 @@ public abstract class BaseClient implements Scrapeable
         }
     }
 
-    private void updateCurrentListAndVersion(BigDecimal addValue, String message)
+    private void updateCurrentListContentsAndVersion(String message)
     {
-        currentNewsList.clear();
-        currentNewsList.addAll(tempNewsList);
-        version = version.add(addValue);
-
-        Utils.printlnWithColor(APP_MSG_COLOR, message + version.toEngineeringString());
+        try
+        {
+            currentNewsList.clear();
+            currentNewsList.addAll(tempNewsList);
+            version = version.add(BigDecimal.valueOf(0.01));
+            Utils.printlnWithColor(APP_MSG_COLOR, message + version.toEngineeringString());
+        } catch (Exception e)
+        {
+            System.out.println("ERRRRRRRRRR -> " + e.getMessage() + " <- ERRRRRRRRRR");
+        }
     }
 
     void clearTempNewsList()
